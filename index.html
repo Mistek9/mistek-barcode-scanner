@@ -8,15 +8,45 @@
     body { font-family: sans-serif; text-align: center; padding: 1rem; }
     video { width: 100%; max-width: 400px; border: 2px solid #333; border-radius: 10px; }
     #message { margin-top: 1rem; font-size: 1.2rem; font-weight: bold; }
+    #log { margin-top: 1rem; max-height: 200px; overflow-y: auto; text-align: left; border-top: 1px solid #ccc; padding-top: 1rem; }
+    .flash { animation: flash 0.2s ease-in-out; }
+    @keyframes flash {
+      from { background-color: #d4edda; }
+      to { background-color: white; }
+    }
   </style>
 </head>
 <body>
   <h2>Scan a Barcode</h2>
   <video id="scanner" autoplay muted playsinline></video>
   <div id="message">Waiting for scan...</div>
+  <div id="log"></div>
+  <audio id="beep" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
 
   <script>
     const sheetWebhook = "https://script.google.com/macros/s/AKfycbzVNzoAInySjwO3yIsTbA1PWGz87PdD54lNbUQpk-W__4US3dCiltMk4MSwaxUYP1s6Tg/exec";
+
+    function playBeep() {
+      const beep = document.getElementById("beep");
+      beep.pause();
+      beep.currentTime = 0;
+      beep.play();
+    }
+
+    function flashMessage() {
+      const msgBox = document.getElementById("message");
+      msgBox.classList.remove("flash");
+      void msgBox.offsetWidth; // trigger reflow
+      msgBox.classList.add("flash");
+    }
+
+    function logScan(barcode) {
+      const log = document.getElementById("log");
+      const timestamp = new Date().toLocaleString();
+      const entry = document.createElement("div");
+      entry.textContent = `[${timestamp}] ${barcode}`;
+      log.prepend(entry);
+    }
 
     function startScanner() {
       Quagga.init({
@@ -36,4 +66,34 @@
       }, function(err) {
         if (err) {
           console.error("Quagga init error:", err);
-          document.getElementById("message").textContent = "Camera error: " +
+          document.getElementById("message").textContent = "Camera error: " + err;
+          return;
+        }
+        console.log("Quagga started");
+        Quagga.start();
+      });
+
+      Quagga.onDetected(function(result) {
+        const code = result.codeResult.code;
+        document.getElementById("message").textContent = "Scanned: " + code;
+        playBeep();
+        flashMessage();
+        logScan(code);
+
+        fetch(sheetWebhook, {
+          method: "POST",
+          body: new URLSearchParams({ barcode: code })
+        });
+
+        Quagga.stop();
+        setTimeout(() => {
+          document.getElementById("message").textContent = "Waiting for next scan...";
+          Quagga.start();
+        }, 2000);
+      });
+    }
+
+    window.addEventListener('load', startScanner);
+  </script>
+</body>
+</html>
