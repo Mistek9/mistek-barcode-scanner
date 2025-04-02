@@ -1,57 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Barcode Scanner to Google Sheet</title>
+  <title>Mistek Barcode Scanner</title>
   <script src="https://unpkg.com/@ericblade/quagga2@1.2.6/dist/quagga.min.js"></script>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 1em; }
-    video { width: 100%; max-width: 400px; border: 1px solid #ccc; border-radius: 10px; }
-    #message { margin-top: 1em; font-weight: bold; }
+    body { font-family: sans-serif; text-align: center; padding: 1rem; }
+    video { width: 100%; max-width: 400px; border: 2px solid #333; border-radius: 10px; }
+    #message { margin-top: 1rem; font-size: 1.2rem; font-weight: bold; }
   </style>
 </head>
 <body>
-  <h2>Scan Barcode</h2>
+  <h2>Scan a Barcode</h2>
   <video id="scanner" autoplay muted playsinline></video>
   <div id="message">Waiting for scan...</div>
 
   <script>
     const sheetWebhook = "https://script.google.com/macros/s/AKfycbzVNzoAInySjwO3yIsTbA1PWGz87PdD54lNbUQpk-W__4US3dCiltMk4MSwaxUYP1s6Tg/exec";
 
-    Quagga.init({
-      inputStream: {
-        name: "Live",
-        type: "LiveStream",
-        target: document.querySelector('#scanner'),
-        constraints: {
-          facingMode: "environment"
+    function startScanner() {
+      Quagga.init({
+        inputStream: {
+          name: "Live",
+          type: "LiveStream",
+          target: document.querySelector("#scanner"),
+          constraints: {
+            facingMode: "environment",
+            width: { min: 640 },
+            height: { min: 480 }
+          }
+        },
+        decoder: {
+          readers: ["ean_reader", "code_128_reader", "upc_reader"]
         }
-      },
-      decoder: {
-        readers: ["code_128_reader", "ean_reader", "upc_reader"]
-      }
-    }, function(err) {
-      if (err) {
-        console.error("Quagga init error:", err);
-        return;
-      }
-      console.log("Quagga started");
-      Quagga.start();
-    });
-
-    Quagga.onDetected(function(result) {
-      const code = result.codeResult.code;
-      document.getElementById("message").innerText = `Scanned: ${code}`;
-      fetch(sheetWebhook, {
-        method: "POST",
-        body: new URLSearchParams({ barcode: code })
-      });
-      Quagga.stop();
-      setTimeout(() => {
-        document.getElementById("message").innerText = "Waiting for scan...";
-        Quagga.start();
-      }, 2000);
-    });
-  </script>
-</body>
-</html>
+      }, function(err) {
+        if (err) {
+          console.error("Quagga init error:", err);
+          document.getElementById("message").textContent = "Camera error: " +
