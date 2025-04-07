@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mistek Barcode Scanner</title>
+  <script src="https://unpkg.com/@ericblade/quagga2@1.2.6/dist/quagga.min.js"></script>
+  <style>
+    :root {
+      --mistek-blue: #0063A0;
+      --mistek-banner: #0089D1;
+      --mistek-light-gray: #f5f5f5;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: var(--mistek-light-gray);
+      color: var(--mistek-blue);
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: var(--mistek-banner);
+      padding: 0.5rem;
+      text-align: center;
+    }
+
+    header img {
+      max-width: 275px;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: flex-start;
+      padding: 1rem 2rem 0 2rem;
+    }
+
+    .back-btn {
+      width: auto;
+      display: inline-block;
+      background-color: var(--mistek-blue);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      background-color: #004b7a;
+    }
+
+    h2 {
+      color: var(--mistek-blue);
+      text-align: center;
+      margin-top: 0.5rem;
+      font-size: 1.8rem;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 4rem;
+      padding: 1.5rem 2rem 2rem 2rem;
+      flex-wrap: wrap;
+    }
+
+    .manual-entry,
+    .log-column {
+      flex: 0 0 340px;
+    }
+
+    .camera-column {
+      flex: 0 0 720px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .section-label {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      color: var(--mistek-blue);
+    }
+
+    select,
+    input,
+    button {
+      padding: 0.75rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+      color: var(--mistek-blue);
+    }
+
+    button {
+      background-color: var(--mistek-blue);
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #004b7a;
+    }
+
+    #interactive {
+      position: relative;
+      width: 720px;
+      height: 405px;
+      border: 4px solid var(--mistek-blue);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      box-sizing: border-box;
+    }
+
+    #interactive video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 720px !important;
+      height: 405px !important;
+      object-fit: cover;
+      display: block;
+      box-sizing: border-box;
+    }
+
+    #message {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    #cart {
+      height: 405px;
+      overflow-y: auto;
+      background-color: white;
+      padding: 1rem;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      color: var(--mistek-blue);
+    }
+
+    #log {
+      height: 405px;
+      overflow-y: auto;
+      background-color: white;
+      padding: 1rem;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      color: var(--mistek-blue);
+    }
+
+    .flash {
+      animation: flash 0.2s ease-in-out;
+    }
+
+    @keyframes flash {
+      from { background-color: #d4edda; }
+      to { background-color: white; }
+    }
+
+    .green-flash {
+      animation: greenFlash 0.3s ease-in-out;
+    }
+
+    @keyframes greenFlash {
+      from { border-color: limegreen; }
+      to { border-color: var(--mistek-blue); }
+    }
+
+    .modify-btns {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .modify-btns button {
+      font-size: 0.8rem;
+      padding: 0.5rem 0.8rem;
+      width: auto;
+    }
+
+    .red-flash {
+      animation: redFlash 0.3s ease-in-out;
+    }
+
+    @keyframes redFlash {
+      from { border-color: red; }
+      to { border-color: var(--mistek-blue); }
+    }
+    
+    /* New CSS for Word of the Day section */
+    .word-of-the-day {
+      margin-top: 1rem;
+      text-align: center;
+    }
+    
+    .word-of-the-day h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .word-of-the-day img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://mistek.co.uk/wp-content/uploads/2024/10/Mistek-Logos-Authorised-03.png" alt="Mistek Logo">
+  </header>
+
+  <div class="top-controls">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+  </div>
+
+  <h2 id="greeting">Scan a Barcode</h2>
+
+  <div class="container">
+    <div class="manual-entry">
+      <div class="section-label">Manual Entry</div>
+      <select id="manualInput">
+        <option value="">-- Select barcode manually --</option>
+        <option value="SH11">Sprayhead</option>
+        <option value="AP08">Pump</option>
+        <option value="CT01">Controller</option>
+        <option value="DT01">Wireless Detector</option>
+        <option value="AC03_AA">Accessory Pack</option>
+        <option value="50099383003826">Aico Relay</option>
+        <option value="5099383006520">Aico Carbon</option>
+        <option value="5099383006537">Aico Multi</option>
+        <option value="5099383010275">Aico Heat Bat</option>
+        <option value="5051178139028">Aico Module</option>
+        <option value="5099383006506">Aico Heat Mains</option>
+        <option value="5099383006544">Aico H&CO</option>
+        <option value="5099383006513">Aico Optical</option>
+      </select>
+      <input id="qtyInput" placeholder="Quantity (optional)" type="number" />
+      <button onclick="submitManual()">Submit Manual Entry</button>
+      <button onclick="undoLast()">Undo Last</button>
+      
+      <!-- New Word of the Day Section -->
+      <div class="word-of-the-day">
+        <h3>Word of the day</h3>
+        <img src="http://www.thefreedictionary.com/_/!wod!350!0.png" alt="Word of the Day">
+      </div>
+    </div>
+
+    <div class="camera-column">
+      <div id="interactive"></div>
+      <div id="message">Waiting for scan...</div>
+    </div>
+
+    <div class="log-column">
+      <div class="section-label">Log</div>
+      <div id="cart" class="cart-list"></div>
+    </div>
+  </div>
+
+  <audio id="beep" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+
+  <script>
+    const sheetWebhook = "https://script.google.com/macros/s/AKfycbyim_TfDq0zoUjU2pSMHUiLxWGityb2otyfA7_opcAAd2JLLy_9lj8IGkTuuqDPm2vWzg/exec";
+    let lastScanned = "";
+    let cooldown = false;
+    const submittedStack = [];
+    const user = localStorage.getItem('selectedUser') || "User";
+
+    const barcodeMap = {
+      SH11: "Sprayhead", 
+      AP08: "Pump", 
+      CT01: "Controller", 
+      DT01: "Wireless Detector",
+      AC03_AA: "Accessory Pack", 
+      '50099383003826': "Aico Relay", 
+      '5099383006520': "Aico Carbon",
+      '5099383006537': "Aico Multi", 
+      '5099383010275': "Aico Heat Bat", 
+      '5051178139028': "Aico Module",
+      '5099383006506': "Aico Heat Mains", 
+      '5099383006544': "Aico H&CO", 
+      '5099383006513': "Aico Optical"
+    };
+
+    document.getElementById("greeting").textContent = `Hi ${user}, Scan a barcode`;
+
+    function getProductName(barcode) {
+      return barcodeMap[barcode] || barcode;
+    }
+
+    function playBeep() {
+      const beep = document.getElementById("beep");
+      beep.pause();
+      beep.currentTime = 0;
+      beep.play();
+    }
+
+    function flashMessage() {
+      const msgBox = document.getElementById("message");
+      msgBox.classList.remove("flash");
+      void msgBox.offsetWidth;
+      msgBox.classList.add("flash");
+    }
+
+    const cartItems = {};
+
+    function updateCart() {
+      const cart = document.getElementById("cart");
+      cart.innerHTML = "";
+      for (const [name, qty] of Object.entries(cartItems)) {
+        if (qty <= 0) {
+          delete cartItems[name];
+          continue;
+        }
+        const item = document.createElement("div");
+        item.innerHTML = `
+          <span style="flex:1; font-weight: bold">${name}</span>
+          <span style="margin: 0 1rem;"><b>Qty:</b> ${qty}</span>
+          <span class="modify-btns">
+            <button onclick="modifyItem('${name}', 1)">+</button>
+            <button onclick="modifyItem('${name}', -1)">−</button>
+          </span>`;
+        item.style.display = "flex";
+        item.style.justifyContent = "space-between";
+        item.style.alignItems = "center";
+        cart.appendChild(item);
+      }
+    }
+
+    function modifyItem(name, delta) {
+      const barcode = Object.keys(barcodeMap).find(key => barcodeMap[key] === name);
+      if (!barcode) return;
+      const quantityChange = delta === -1 ? -1 : delta;
+      fetch(sheetWebhook, {
+        method: "POST",
+        body: new URLSearchParams({ barcode: barcode, quantity: quantityChange, user })
+      });
+      if (!cartItems[name]) cartItems[name] = 0;
+      cartItems[name] += quantityChange;
+      if (cartItems[name] <= 0) {
+        delete cartItems[name];
+      }
+      updateCart();
+    }
+
+    function logScan(barcode, quantity = "", action = "Scanned") {
+      const name = getProductName(barcode);
+      const timestamp = new Date().toLocaleString();
+      const entry = document.createElement("div");
+      entry.textContent = `[${timestamp}] ${action}: ${name}` + (quantity ? ` (Qty: ${quantity})` : "");
+      if (!cartItems[name]) cartItems[name] = 0;
+      cartItems[name] += parseInt(quantity || "1");
+      updateCart();
+    }
+
+    function submitScan(barcode, quantity = "", isUndo = false) {
+      const codeToSend = barcode;
+      let productName = getProductName(barcode);
+      // If the product name equals the barcode, it means it's not in the map
+      if (productName === barcode) {
+        // Play negative tone via red flash effect
+        const camPreview = document.getElementById("interactive");
+        camPreview.classList.remove("green-flash");
+        void camPreview.offsetWidth;
+        camPreview.classList.add("red-flash");
+        document.getElementById("message").textContent = "Barcode not recognized!";
+        return;
+      }
+      const actionText = isUndo ? "Undo" : "Scanned";
+      document.getElementById("message").textContent = `${actionText}: ${productName}` + (quantity ? ` (Qty: ${quantity})` : "");
+      playBeep();
+      flashMessage();
+      const camPreview = document.getElementById("interactive");
+      camPreview.classList.remove("green-flash");
+      void camPreview.offsetWidth;
+      camPreview.classList.add("green-flash");
+      logScan(barcode, quantity, actionText);
+      fetch(sheetWebhook, {
+        method: "POST",
+        body: new URLSearchParams({ barcode: codeToSend, quantity, user })
+      });
+      if (!isUndo) {
+        submittedStack.push({ barcode, quantity });
+      }
+    }
+
+    function submitManual() {
+      const code = document.getElementById("manualInput").value.trim();
+      let qty = document.getElementById("qtyInput").value.trim();
+      if (!qty) qty = "1";
+      if (code) {
+        submitScan(code, qty);
+        resetInactivityTimer();
+        resetInactivityTimer();
+        document.getElementById("qtyInput").value = "";
+        document.getElementById("manualInput").selectedIndex = 0;
+      }
+    }
+
+    function undoLast() {
+      if (submittedStack.length === 0) {
+        document.getElementById("message").textContent = "No previous scans to undo.";
+        return;
+      }
+      const lastEntry = submittedStack.pop();
+      submitScan(lastEntry.barcode, -lastEntry.quantity, true);
+    }
+
+    function startScanner() {
+      Quagga.init({
+        inputStream: {
+          name: "Live",
+          type: "LiveStream",
+          target: document.querySelector('#interactive'),
+          constraints: {
+            facingMode: "environment",
+            width: { ideal: 720 },
+            height: { ideal: 405 }
+          }
+        },
+        decoder: {
+          readers: ["code_128_reader", "ean_reader", "upc_reader"]
+        }
+      }, function(err) {
+        if (err) {
+          document.getElementById("message").textContent = "Camera error: " + err;
+          return;
+        }
+        Quagga.start();
+      });
+      Quagga.onDetected(function(result) {
+        if (cooldown) return;
+        const code = result.codeResult.code;
+        if (!code || code === lastScanned) return;
+        lastScanned = code;
+        cooldown = true;
+        let qty = document.getElementById("qtyInput").value.trim();
+        if (!qty) qty = "1";
+        submitScan(code, qty);
+        resetInactivityTimer();
+        resetInactivityTimer();
+        setTimeout(() => {
+          cooldown = false;
+          lastScanned = "";
+          document.getElementById("message").textContent = "Waiting for scan...";
+        }, 2000);
+      });
+    }
+
+    function goBack() {
+      window.location.href = "index.html";
+    }
+
+    let lastActivity = Date.now();
+
+    function resetInactivityTimer() {
+      lastActivity = Date.now();
+    }
+
+    function monitorInactivity() {
+      setInterval(() => {
+        if (Date.now() - lastActivity > 180000) {
+          goBack();
+        }
+      }, 30000);
+    }
+
+    window.addEventListener("load", () => {
+      startScanner();
+      monitorInactivity();
+    });
+  </script>
+</body>
+</html>
+
+<!-- Red Button to Trigger Typeform -->
+<div id="popupButton" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #FF0000; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1rem;">
+  Running low on something?
+</div>
+
+<!-- Hidden iframe for Typeform popup -->
+<iframe id="typeformPopup" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1000;" src="https://taylor386.typeform.com/to/UziCjG93"></iframe>
+
+<script>
+  // Show the typeform popup when the button is clicked
+  document.getElementById("popupButton").addEventListener("click", function() {
+    document.getElementById("typeformPopup").style.display = "block";
+  });
+
+  // Close the typeform popup when clicked outside the iframe
+  document.getElementById("typeformPopup").addEventListener("click", function() {
+    document.getElementById("typeformPopup").style.display = "none";
+  });
+</script>
