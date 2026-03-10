@@ -1,184 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Select User</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      color: #0063A0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      margin: 0;
-      padding: 2rem;
-    }
-    header {
-      background-color: #0089D1;
-      width: 100%;
-      padding: 0.5rem;
-      text-align: center;
-    }
-    header img {
-      max-width: 250px;
-    }
-    h1 {
-      margin: 2rem 0 2rem;
-    }
-    .user-buttons {
-      display: grid;
-      grid-template-columns: repeat(4, 250px); /* 8x2 grid */
-      gap: 2rem;  /* Increased gap between buttons */
-      margin-bottom: 2rem;  /* Additional space below the grid */
-      margin-top: 3rem;  /* Move the buttons down */
-    }
-    .user-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-    }
-    .user-button img {
-      width: 100%;  /* Make the image fill the button */
-      height: 100%;
-      border-radius: 50%;  /* Make the image perfectly round */
-      object-fit: cover;
-      max-width: 250px;  /* Set a max width for the images */
-      max-height: 250px; /* Set a max height for the images */
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select User</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #0063A0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  margin: 0;
+  padding: 2rem;
+}
+
+header {
+  background-color: #0089D1;
+  width: 100%;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+header img {
+  max-width: 250px;
+}
+
+h1 {
+  margin: 2rem 0 2rem;
+}
+
+.user-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 250px);
+  gap: 2rem;
+  margin-bottom: 2rem;
+  margin-top: 3rem;
+}
+
+.user-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.user-button img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  max-width: 250px;
+  max-height: 250px;
+}
+</style>
 </head>
+
 <body>
-  <header>
-    <img src="https://mistek.co.uk/wp-content/uploads/2024/10/Mistek-Logos-Authorised-03.png" alt="Mistek Logo">
-  </header>
 
-  <h1>Select Who is Scanning</h1>
-  <div class="user-buttons">
-    <button class="user-button" onclick="selectUser('Nick')">
-      <img src="Nick.png" alt="Nick">
-    </button>
-    <button class="user-button" onclick="selectUser('Mike')">
-      <img src="Mike.png" alt="Mike">
-    </button>
-    <button class="user-button" onclick="selectUser('Paul')">
-      <img src="Paul.png" alt="Paul">
-    </button>
-    <button class="user-button" onclick="selectUser('Ken')">
-      <img src="Ken.png" alt="Ken">
-    </button>
-    <button class="user-button" onclick="selectUser('Richard')">
-      <img src="Richard.png" alt="Richard">
-    </button>
-    <button class="user-button" onclick="selectUser('Kieran')">
-      <img src="Kieran.png" alt="Kieran">
-    </button>
-    <button class="user-button" onclick="selectUser('Spav')">
-      <img src="Spav.png" alt="Spav">
-    </button>
-    <button class="user-button" onclick="selectUser('Office')">
-      <img src="Office.png" alt="Office">
-    </button>
-  </div>
+<header>
+<img src="Mistek-Logos-Authorised-03.png" alt="Mistek Logo">
+</header>
 
-  <script>
-    function selectUser(name) {
-      localStorage.setItem('selectedUser', name);
-      window.location.href = "scanner.html";
-    }
-  </script>
-</body>
-</html>
+<h1>Select Who is Scanning</h1>
 
-<!-- Word of the Day Section -->
-
-
-<!-- Red Button to Trigger Typeform -->
-<div id="popupButton" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #FF0000; color: white; padding: 14px 28px; border-radius: 5px; cursor: pointer; font-size: 1.3rem;">
-  Running low on something?
+<div class="user-buttons">
+<button class="user-button" onclick="selectUser('Nick')"><img src="Nick.png" alt="Nick"></button>
+<button class="user-button" onclick="selectUser('Mike')"><img src="Mike.png" alt="Mike"></button>
+<button class="user-button" onclick="selectUser('Paul')"><img src="Paul.png" alt="Paul"></button>
+<button class="user-button" onclick="selectUser('Ken')"><img src="Ken.png" alt="Ken"></button>
+<button class="user-button" onclick="selectUser('Richard')"><img src="Richard.png" alt="Richard"></button>
+<button class="user-button" onclick="selectUser('Kieran')"><img src="Kieran.png" alt="Kieran"></button>
+<button class="user-button" onclick="selectUser('Spav')"><img src="Spav.png" alt="Spav"></button>
+<button class="user-button" onclick="selectUser('Office')"><img src="Office.png" alt="Office"></button>
 </div>
 
 <script>
-  document.getElementById("popupButton").addEventListener("click", function () {
-    // Overlay
-    const overlay = document.createElement("div");
-    overlay.id = "popupOverlay";
-    overlay.style.position = "fixed";
-    overlay.style.top = "0";
-    overlay.style.left = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-    overlay.style.zIndex = "1000";
-    overlay.style.display = "flex";
-    overlay.style.alignItems = "center";
-    overlay.style.justifyContent = "center";
-
-    // Container
-    const container = document.createElement("div");
-    container.style.position = "relative";
-    container.style.width = "95%";
-    container.style.maxWidth = "1200px";
-    container.style.height = "80%";
-    container.style.borderRadius = "12px";
-    container.style.overflow = "hidden";
-    container.style.boxShadow = "0 0 20px rgba(0,0,0,0.3)";
-    container.style.backgroundColor = "#fff";
-
-    // Iframe
-    const iframe = document.createElement("iframe");
-    iframe.src = "https://taylor386.typeform.com/to/UziCjG93";
-    iframe.style.width = "100%";
-    iframe.style.height = "100%";
-    iframe.style.border = "none";
-
-    // Close Button
-	const closeBtn = document.createElement("button");
-	closeBtn.textContent = "×";
-	closeBtn.style.position = "absolute";
-	closeBtn.style.top = "10px";
-	closeBtn.style.right = "15px";
-	closeBtn.style.background = "red";
-	closeBtn.style.color = "white";
-	closeBtn.style.border = "none";
-	closeBtn.style.borderRadius = "50%";
-	closeBtn.style.width = "40px";
-	closeBtn.style.height = "40px";
-	closeBtn.style.fontSize = "1.5rem";
-	closeBtn.style.lineHeight = "1";
-	closeBtn.style.cursor = "pointer";
-	closeBtn.style.zIndex = "1001";
-	closeBtn.style.display = "flex";
-	closeBtn.style.alignItems = "center";
-	closeBtn.style.justifyContent = "center";
-
-
-    closeBtn.addEventListener("click", function () {
-      document.body.removeChild(overlay);
-    });
-
-    container.appendChild(closeBtn);
-    container.appendChild(iframe);
-    overlay.appendChild(container);
-    document.body.appendChild(overlay);
-  });
+function selectUser(name) {
+  localStorage.setItem('selectedUser', name);
+  window.location.href = "scanner.html";
+}
 </script>
+
+<!-- Faulty Equipment Button -->
+<div id="faultyButton" style="
+position: fixed;
+bottom: 80px;
+left: 50%;
+transform: translateX(-50%);
+background-color: #FF0000;
+color: white;
+padding: 14px 28px;
+border-radius: 5px;
+cursor: pointer;
+font-size: 1.3rem;">
+Faulty Equipment?
+</div>
+
+<!-- Running Low Button -->
+<div id="popupButton" style="
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%);
+background-color: #FF0000;
+color: white;
+padding: 14px 28px;
+border-radius: 5px;
+cursor: pointer;
+font-size: 1.3rem;">
+Running low on something?
+</div>
 
 <script>
-  // Show the typeform popup when the button is clicked
-  document.getElementById("popupButton").addEventListener("click", function() {
-    document.getElementById("typeformPopup").style.display = "block";
-  });
+function createPopup(url) {
 
-  // Close the typeform popup when clicked outside the iframe
-  document.getElementById("typeformPopup").addEventListener("click", function() {
-    document.getElementById("typeformPopup").style.display = "none";
-  });
+  const overlay = document.createElement("div");
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.backgroundColor = "rgba(0,0,0,0.5)";
+  overlay.style.zIndex = "1000";
+  overlay.style.display = "flex";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+
+  const container = document.createElement("div");
+  container.style.position = "relative";
+  container.style.width = "95%";
+  container.style.maxWidth = "1200px";
+  container.style.height = "80%";
+  container.style.borderRadius = "12px";
+  container.style.overflow = "hidden";
+  container.style.boxShadow = "0 0 20px rgba(0,0,0,0.3)";
+  container.style.backgroundColor = "#fff";
+
+  const iframe = document.createElement("iframe");
+  iframe.src = url;
+  iframe.style.width = "100%";
+  iframe.style.height = "100%";
+  iframe.style.border = "none";
+
+  const closeBtn = document.createElement("button");
+  closeBtn.textContent = "×";
+  closeBtn.style.position = "absolute";
+  closeBtn.style.top = "10px";
+  closeBtn.style.right = "15px";
+  closeBtn.style.background = "red";
+  closeBtn.style.color = "white";
+  closeBtn.style.border = "none";
+  closeBtn.style.borderRadius = "50%";
+  closeBtn.style.width = "40px";
+  closeBtn.style.height = "40px";
+  closeBtn.style.fontSize = "1.5rem";
+  closeBtn.style.cursor = "pointer";
+
+  closeBtn.onclick = () => document.body.removeChild(overlay);
+
+  container.appendChild(closeBtn);
+  container.appendChild(iframe);
+  overlay.appendChild(container);
+  document.body.appendChild(overlay);
+}
+
+document.getElementById("popupButton").onclick = function() {
+  createPopup("https://taylor386.typeform.com/to/UziCjG93");
+};
+
+document.getElementById("faultyButton").onclick = function() {
+  createPopup("https://taylor386.typeform.com/to/hXf0Wa");
+};
 </script>
+
+</body>
+</html>
